@@ -1,6 +1,8 @@
 import { UserService } from "./services/user.service";
 import User from "./model/user";
 
+import * as _ from "lodash";
+
 export class AppController {
 
     public static $inject: string[] = ["UserService"];
@@ -18,7 +20,9 @@ export class AppController {
     constructor(
         private _userService: UserService
     ) {
+
         this._users = this._userService.getUsers();
-        this._users.map(console.log);
+        _.map(this._users, user => console.log(user));
     }
 };
+

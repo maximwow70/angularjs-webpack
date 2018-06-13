@@ -72,7 +72,7 @@ module.exports = {
             name: "common",
             minChunks: 2
         }),
-        // new LiveReloadPlugin(options)
+        // new LiveReloadPlugin()
     ],
     devServer: {
         host: "localhost",
