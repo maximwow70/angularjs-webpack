@@ -5,5 +5,5 @@ import { UserService } from "./services/user.service";
 angular
     .module("AppModule", [])
     .service("UserService", UserService)
-    .directive("app", AppDirective)
+    .directive("app", AppDirective.factory())
     .config(function () { });
