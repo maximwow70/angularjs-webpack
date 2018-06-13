@@ -5,10 +5,7 @@ var LiveReloadPlugin = require('webpack-livereload-plugin');
 const ENV = process.env.NODE_ENV || "development";
 
 module.exports = {
-    entry: {
-        // bundle: "./src/index.ts",
-        common: "./src/index.ts"
-    },
+    entry: "./src/index.ts",
     output: {
         path: __dirname + "/dist/",
         filename: "[name].js",
@@ -16,7 +13,7 @@ module.exports = {
     },
     resolve: {
         modules: ["node_modules"],
-        extensions: ["*",".ts", ".js"]
+        extensions: ["*", ".ts", ".js"]
     },
     resolveLoader: {
         modules: ["node_modules"],
@@ -63,7 +60,7 @@ module.exports = {
     watchOptions: {
         aggregateTimeout: 100
     },
-    devtool: ENV == "developmenwt" ? "eval" : "null",
+    devtool: ENV == "development" ? "eval" : "null",
     plugins: [
         new SimpleProgressPlugin(),
         new webpack.NoEmitOnErrorsPlugin(),

@@ -1,3 +1,2 @@
 import "./styles.scss";
-
-import { appModule } from "./app/app.module";
+import "./app/app.module";

@@ -1,5 +1,9 @@
 import * as angular from "angular";
-import { appDirectiveName } from "./app.component";
+import { AppDirective } from "./app.directive";
+import { UserService } from "./services/user.service";
 
-export const appModule = angular
-    .module("filApp", [appDirectiveName]);
+angular
+    .module("AppModule", [])
+    .service("UserService", UserService)
+    .directive("app", AppDirective)
+    .config(function () { });
