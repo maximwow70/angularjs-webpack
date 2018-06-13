@@ -3,13 +3,11 @@ import { IPromise } from "angular";
 
 export class UserService {
 
-    public static $inject: string[] = ["$http"];
-
-    private _apiBase: string = "api-base";
+    public static $inject: string[] = ["$http", "apiBase"];
 
     private _users: User[] = [];
 
-    constructor(private _http: ng.IHttpService) {
+    constructor(private _http: ng.IHttpService, private _apiBase: string) {
 
         this._users = [
             new User(1, "neame"),

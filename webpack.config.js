@@ -1,6 +1,9 @@
-let webpack = require('webpack');
-let SimpleProgressPlugin = require('webpack-simple-progress-plugin');
-var LiveReloadPlugin = require('webpack-livereload-plugin');
+const webpack = require('webpack');
+const SimpleProgressPlugin = require('webpack-simple-progress-plugin');
+const LiveReloadPlugin = require('webpack-livereload-plugin');
+
+const YAML = require("yamljs");
+const constants = JSON.stringify(YAML.load('./configuration.yml'));
 
 const ENV = process.env.NODE_ENV || "development";
 
@@ -66,7 +69,8 @@ module.exports = {
         new webpack.NoEmitOnErrorsPlugin(),
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(ENV),
-            LANG: "RU"
+            LANG: "RU",
+            _environmentConstants: constants
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: "common",
