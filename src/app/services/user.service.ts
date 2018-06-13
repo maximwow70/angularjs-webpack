@@ -14,7 +14,9 @@ export class UserService {
             new User(2, "name2")
         ];
 
-        this.loadUsers().then(console.log);
+        this.loadUsers()
+            .then(console.log)
+            .catch((error) => console.error(error));
     }
 
     private loadUsers(): IPromise<User[]> {
