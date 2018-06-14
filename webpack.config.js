@@ -13,12 +13,17 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const YAML = require("yamljs");
 
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const extractScss = new ExtractTextPlugin('styles.css');
+
 module.exports = env => {
     const constants = JSON.stringify(YAML.load('./configuration.yml'));
     const ENV = env.NODE_ENV || environment.DEV;
 
     const config = {
-        entry: "./src/index.ts",
+        entry: {
+            bundle: "./src/index.ts"
+        },
         output: {
             path: __dirname + "/dist/",
             filename: "[name].js",
@@ -48,16 +53,25 @@ module.exports = env => {
                     use: 'ts-loader',
                     exclude: /node_modules/
                 },
-                { test: /\.css$/, loader: "style-loader!css-loader" },
                 {
-                    test: /\.scss$/,
-                    loader: "style-loader!css-loader!resolve-url!sass-loader?sourceMap"
+                    test: /\.css$/,
+                    loader: extractScss.extract({
+                        fallback: "style-loader",
+                        use: "style-loader!css-loader"
+                    })
+                },
+                {
+                    test: /\.s[ac]ss$/,
+                    loader: extractScss.extract({
+                        fallback: "style-loader",
+                        use: "css-loader!resolve-url!sass-loader?sourceMap"
+                    })
                 },
                 {
                     test: /\.woff2?$|\.ttf$|\.eot$|\.svg$|\.png|\.jpe?g|\.gif$/,
                     loader: "file-loader",
                     options: {
-                        name: "../dist/assets/[name].[hash].[ext]"
+                        outputPath: __dirname + "/dist/assets/"
                     }
                 },
                 {
@@ -78,6 +92,7 @@ module.exports = env => {
         },
         devtool: ENV === environment.DEV ? "source-map" : "null",
         plugins: [
+            extractScss,
             new SimpleProgressPlugin(),
             new webpack.NoEmitOnErrorsPlugin(),
             new webpack.DefinePlugin({
@@ -97,7 +112,8 @@ module.exports = env => {
                     context: "./src/",
                     ignore: ["index.html"]
                 },
-                { from: "./src/index.html", to: "./index.html" }
+                { from: "./src/index.html", to: "./index.html" },
+                // { from: "assets/**/*", to: "./", context: "./src/" }
             ], {})
             // new LiveReloadPlugin()
         ],
@@ -106,9 +122,8 @@ module.exports = env => {
             port: "8040"
         }
     };
-    
 
-    if (ENV !== "dev") {
+    if (ENV !== environment.DEV) {
         config.plugins.push(
             new webpack.optimize.UglifyJsPlugin({
                 compress: {
