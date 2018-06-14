@@ -47550,7 +47550,7 @@ var UserService = /** @class */ (function () {
         ];
         this.loadUsers()
             .then(console.log)
-            .catch(function (error) { return console.error(error); });
+            .catch(function (error) { return console.error("Can not load users!"); });
     }
     UserService.prototype.loadUsers = function () {
         return this._http.get(this._apiBase + "/kek")

@@ -16,7 +16,7 @@ export class UserService {
 
         this.loadUsers()
             .then(console.log)
-            .catch((error) => console.error(error));
+            .catch((error) => console.error("Can not load users!"));
     }
 
     private loadUsers(): IPromise<User[]> {

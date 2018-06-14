@@ -4,17 +4,20 @@ const environment = {
 };
 
 const webpack = require('webpack');
+
 const SimpleProgressPlugin = require('webpack-simple-progress-plugin');
 const LiveReloadPlugin = require('webpack-livereload-plugin');
 
-const YAML = require("yamljs");
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
+const YAML = require("yamljs");
 
 module.exports = env => {
     const constants = JSON.stringify(YAML.load('./configuration.yml'));
     const ENV = env.NODE_ENV || environment.DEV;
 
-    return {
+    const config = {
         entry: "./src/index.ts",
         output: {
             path: __dirname + "/dist/",
@@ -61,7 +64,10 @@ module.exports = env => {
                     test: /index\.html$/,
                     loader: 'html-loader',
                     options: {
-                        name: "../dist/index.html"
+                        name: "../dist/index.html",
+                        minimize: true,
+                        removeComments: false,
+                        collapseWhitespace: false
                     }
                 }
             ]
@@ -83,23 +89,36 @@ module.exports = env => {
                 name: "common",
                 minChunks: 2
             }),
+            new CleanWebpackPlugin(["dist/*"], {}),
+            new CopyWebpackPlugin([
+                {
+                    from: "**/*.html",
+                    to: "./",
+                    context: "./src/",
+                    ignore: ["index.html"]
+                },
+                { from: "./src/index.html", to: "./index.html" }
+            ], {})
             // new LiveReloadPlugin()
         ],
         devServer: {
             host: "localhost",
             port: "8040"
         }
-    }
-};
+    };
+    
 
-// if (ENV != "development" || true) {
-//     module.exports.plugins.push(
-//         new webpack.optimize.UglifyJsPlugin({
-//             compress: {
-//                 warnings: false,
-//                 drop_console: true,
-//                 unsafe: true
-//             }
-//         })
-//     );
-// }
+    if (ENV !== "dev") {
+        config.plugins.push(
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false,
+                    drop_console: true,
+                    unsafe: true
+                }
+            })
+        );
+    }
+
+    return config;
+};
