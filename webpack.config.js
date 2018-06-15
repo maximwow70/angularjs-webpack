@@ -14,11 +14,14 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const YAML = require("yamljs");
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const extractScss = new ExtractTextPlugin('styles.css');
+// const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const extractStyles = new ExtractTextPlugin('styles.css');
 
 module.exports = env => {
     const constants = JSON.stringify(YAML.load('./configuration.yml'));
+
     const ENV = env.NODE_ENV || environment.DEV;
+    const isDevelopment = ENV === environment.DEV;
 
     const config = {
         entry: {
@@ -55,16 +58,38 @@ module.exports = env => {
                 },
                 {
                     test: /\.css$/,
-                    loader: extractScss.extract({
+                    loader: extractStyles.extract({
                         fallback: "style-loader",
-                        use: "style-loader!css-loader"
+                        use: [
+                            { loader: "style-loader" },
+                            {
+                                loader: "css-loader",
+                                options: {
+                                    sourceMap: isDevelopment
+                                }
+                            }
+                        ]
                     })
                 },
                 {
                     test: /\.s[ac]ss$/,
-                    loader: extractScss.extract({
+                    loader: extractStyles.extract({
                         fallback: "style-loader",
-                        use: "css-loader!resolve-url!sass-loader?sourceMap"
+                        use: [
+                            {
+                                loader: "css-loader",
+                                options: {
+                                    sourceMap: isDevelopment
+                                }
+                            },
+                            { loader: "resolve-url" },
+                            {
+                                loader: "sass-loader",
+                                options: {
+                                    sourceMap: isDevelopment
+                                }
+                            }
+                        ]
                     })
                 },
                 {
@@ -86,13 +111,13 @@ module.exports = env => {
                 }
             ]
         },
-        watch: ENV === environment.DEV ? true : false,
+        watch: isDevelopment,
         watchOptions: {
             aggregateTimeout: 100
         },
-        devtool: ENV === environment.DEV ? "source-map" : "null",
+        devtool: isDevelopment ? "source-map" : "null",
         plugins: [
-            extractScss,
+            extractStyles,
             new SimpleProgressPlugin(),
             new webpack.NoEmitOnErrorsPlugin(),
             new webpack.DefinePlugin({
@@ -123,7 +148,7 @@ module.exports = env => {
         }
     };
 
-    if (ENV !== environment.DEV) {
+    if (!isDevelopment) {
         config.plugins.push(
             new webpack.optimize.UglifyJsPlugin({
                 compress: {
