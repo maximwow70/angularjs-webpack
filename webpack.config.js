@@ -67,7 +67,8 @@ module.exports = env => {
                                 options: {
                                     sourceMap: isDevelopment
                                 }
-                            }
+                            },
+                            { loader: "resolve-url" }
                         ]
                     })
                 },
@@ -138,7 +139,7 @@ module.exports = env => {
                     ignore: ["index.html"]
                 },
                 { from: "./src/index.html", to: "./index.html" },
-                // { from: "assets/**/*", to: "./", context: "./src/" }
+                { from: "assets/**/*", to: "./", context: "./src/" } // todo: replace with file loader
             ], {})
             // new LiveReloadPlugin()
         ],
