@@ -3,25 +3,47 @@ const environment = {
     PROD: "prod",
 };
 
-const webpack = require('webpack');
+const webpack = require("webpack");
 
-const SimpleProgressPlugin = require('webpack-simple-progress-plugin');
-const LiveReloadPlugin = require('webpack-livereload-plugin');
+const SimpleProgressPlugin = require("webpack-simple-progress-plugin");
+const LiveReloadPlugin = require("webpack-livereload-plugin");
 
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const YAML = require("yamljs");
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const extractStyles = new ExtractTextPlugin('styles.css');
+const extractStyles = new ExtractTextPlugin("styles.css");
+const autoprefixer = require("autoprefixer");
 
 module.exports = env => {
-    const constants = JSON.stringify(YAML.load('./configuration.yml'));
+    const constants = JSON.stringify(YAML.load("./configuration.yml"));
 
     const ENV = env.NODE_ENV || environment.DEV;
     const isDevelopment = ENV === environment.DEV;
+
+    const baseStyleLoaders = [
+        {
+            loader: 'css-loader',
+            options: {
+                sourceMap: isDevelopment
+            }
+        },
+        { loader: "resolve-url" },
+        {
+            loader: "postcss-loader",
+            options: {
+                plugins: () => [
+                    autoprefixer({
+                        browsers: ["ie >= 10", "last 4 version"]
+                    })
+                ],
+                sourceMap: isDevelopment
+            }
+        }
+    ];
 
     const config = {
         entry: {
@@ -38,7 +60,7 @@ module.exports = env => {
         },
         resolveLoader: {
             modules: ["node_modules"],
-            moduleExtensions: ['-loader'],
+            moduleExtensions: ["-loader"],
             extensions: ["*", ".js"]
         },
         module: {
@@ -46,14 +68,14 @@ module.exports = env => {
                 {
                     test: /\.js$/,
                     exclude: /node_modules/,
-                    loader: 'babel-loader',
+                    loader: "babel-loader",
                     query: {
-                        presets: ['es2015'],
+                        presets: ["es2015"],
                     }
                 },
                 {
                     test: /\.tsx?$/,
-                    use: 'ts-loader',
+                    use: "ts-loader",
                     exclude: /node_modules/
                 },
                 {
@@ -62,13 +84,7 @@ module.exports = env => {
                         fallback: "style-loader",
                         use: [
                             { loader: "style-loader" },
-                            {
-                                loader: "css-loader",
-                                options: {
-                                    sourceMap: isDevelopment
-                                }
-                            },
-                            { loader: "resolve-url" }
+                            ...baseStyleLoaders
                         ]
                     })
                 },
@@ -77,13 +93,7 @@ module.exports = env => {
                     loader: extractStyles.extract({
                         fallback: "style-loader",
                         use: [
-                            {
-                                loader: "css-loader",
-                                options: {
-                                    sourceMap: isDevelopment
-                                }
-                            },
-                            { loader: "resolve-url" },
+                            ...baseStyleLoaders,
                             {
                                 loader: "sass-loader",
                                 options: {
@@ -102,7 +112,7 @@ module.exports = env => {
                 },
                 {
                     test: /index\.html$/,
-                    loader: 'html-loader',
+                    loader: "html-loader",
                     options: {
                         name: "../dist/index.html",
                         minimize: true,
