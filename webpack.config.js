@@ -5,6 +5,8 @@ const environment = {
 
 const webpack = require("webpack");
 
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const SimpleProgressPlugin = require("webpack-simple-progress-plugin");
 const LiveReloadPlugin = require("webpack-livereload-plugin");
 
@@ -113,20 +115,10 @@ module.exports = env => {
                     test: /\.woff2?$|\.ttf$|\.eot$|\.otf$|\.svg$|\.png|\.jpe?g|\.gif$/,
                     loader: "file-loader",
                     options: {
-                        outputPath: "/assets/", // relative to dist,
+                        outputPath: "assets/", // relative to dist,
                         name(file) {
                             return isDevelopment ? "[name].[ext]" : "[name].[hash].[ext]";
                         }
-                    }
-                },
-                {
-                    test: /index\.html$/,
-                    loader: "html-loader",
-                    options: {
-                        name: "../dist/index.html",
-                        minimize: true,
-                        removeComments: false,
-                        collapseWhitespace: false
                     }
                 }
             ]
@@ -157,9 +149,13 @@ module.exports = env => {
                     context: "./src/",
                     ignore: ["index.html"]
                 },
-                { from: "./src/index.html", to: "./index.html" },
+                // { from: "./src/index.html", to: "./index.html" },
                 // { from: "assets/**/*", to: "./", context: "./src/" } // todo: replace with file loader
-            ], {})
+            ], {}),
+            new HtmlWebpackPlugin({
+                filename: "./index.html",
+                template: "./src/index.html"
+            })
             // new LiveReloadPlugin()
         ],
         devServer: {
