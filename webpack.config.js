@@ -28,10 +28,16 @@ module.exports = env => {
         {
             loader: 'css-loader',
             options: {
+                sourceMap: isDevelopment,
+                minimize: !isDevelopment
+            }
+        },
+        {
+            loader: "resolve-url",
+            options: {
                 sourceMap: isDevelopment
             }
         },
-        { loader: "resolve-url" },
         {
             loader: "postcss-loader",
             options: {
@@ -40,7 +46,7 @@ module.exports = env => {
                         browsers: ["ie >= 10", "last 4 version"]
                     })
                 ],
-                sourceMap: isDevelopment
+                sourceMap: isDevelopment ? "inline" : false
             }
         }
     ];
@@ -107,7 +113,10 @@ module.exports = env => {
                     test: /\.woff2?$|\.ttf$|\.eot$|\.otf$|\.svg$|\.png|\.jpe?g|\.gif$/,
                     loader: "file-loader",
                     options: {
-                        outputPath: "/assets/" // relative to dist
+                        outputPath: "/assets/", // relative to dist,
+                        name(file) {
+                            return isDevelopment ? "[name].[ext]" : "[name].[hash].[ext]";
+                        }
                     }
                 },
                 {
@@ -155,7 +164,8 @@ module.exports = env => {
         ],
         devServer: {
             host: "localhost",
-            port: "8040"
+            port: "8040",
+            contentBase: "dist"
         }
     };
 
