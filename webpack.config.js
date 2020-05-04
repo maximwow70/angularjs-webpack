@@ -3,6 +3,7 @@ const environment = {
     PROD: "prod",
 };
 
+// #region imports
 const webpack = require("webpack");
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -19,6 +20,7 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 // const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const extractStyles = new ExtractTextPlugin("styles.css");
 const autoprefixer = require("autoprefixer");
+// #endregion imports
 
 module.exports = env => {
     const constants = JSON.stringify(YAML.load("./configuration.yml"));
@@ -112,10 +114,20 @@ module.exports = env => {
                     })
                 },
                 {
-                    test: /\.woff2?$|\.ttf$|\.eot$|\.otf$|\.svg$|\.png|\.jpe?g|\.gif$/,
+                    test: /\.woff2?$|\.ttf$|\.eot$|\.otf$/,
                     loader: "file-loader",
                     options: {
-                        outputPath: "assets/", // relative to dist,
+                        outputPath: "assets/fonts", // relative to dist,
+                        name(file) {
+                            return isDevelopment ? "[name].[ext]" : "[name].[hash].[ext]";
+                        }
+                    }
+                },
+                {
+                    test: /\.svg$|\.png|\.jpe?g|\.gif$/,
+                    loader: "file-loader",
+                    options: {
+                        outputPath: "assets/images", // relative to dist,
                         name(file) {
                             return isDevelopment ? "[name].[ext]" : "[name].[hash].[ext]";
                         }

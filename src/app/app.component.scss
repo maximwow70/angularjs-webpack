@@ -8,10 +8,8 @@
     &--image {
         width: 200px;
         height: 200px;
-        background-image: url("./assets/img/1.jpg");
-    }
-
-    &--content {
+        background-image: url("./assets/images/1.jpg");
+        background-size: cover;
     }
 
     &--animation {

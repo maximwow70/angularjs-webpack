@@ -10,7 +10,7 @@ export class UserService {
     constructor(private _http: ng.IHttpService, private _apiBase: string) {
 
         this._users = [
-            new User(1, "neame"),
+            new User(1, "name"),
             new User(2, "name2")
         ];
 
