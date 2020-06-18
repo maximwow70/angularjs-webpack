@@ -13,7 +13,7 @@
     "prod-build": "webpack --env.NODE_ENV=prod"
   },
   "dependencies": {
-    "angular": "1.4.9",
+    "angular": "1.8.0",
     "lodash": "^4.17.10"
   },
   "devDependencies": {
